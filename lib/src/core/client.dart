@@ -300,12 +300,18 @@ class Web3Client {
       return cred.sendTransaction(transaction);
     }
 
-    var signed = await signTransaction(
-      cred,
-      transaction,
-      chainId: chainId,
-      fetchChainIdFromNetworkId: fetchChainIdFromNetworkId,
-    );
+    Uint8List signed;
+    if (fetchChainIdFromNetworkId) {
+      signed = await signTransaction(cred, transaction,
+          fetchChainIdFromNetworkId: fetchChainIdFromNetworkId);
+    } else {
+      signed = await signTransaction(
+        cred,
+        transaction,
+        chainId: chainId,
+        fetchChainIdFromNetworkId: fetchChainIdFromNetworkId,
+      );
+    }
 
     if (transaction.isEIP1559) {
       signed = prependTransactionType(0x02, signed);
